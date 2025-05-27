@@ -27,16 +27,17 @@ WebApp.handlers.use("/hello", (req, res, next) => {
 async function insertLink({ title, url }) {
   await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
 }
-const insertTask = (taskText) => TasksCollection.insertAsync({ text: taskText });
+const insertTask = ( task ) => TasksCollection.insertAsync(task);
 
 Meteor.startup(async () => {
+  TasksCollection.rawCollection().drop();
   if ((await TasksCollection.find().countAsync()) === 0) {
     [
-        "1st Task",
-        "2nd Task",
-        "3rd Task",
-        "4th Task",
-        "5th Task",
+      { text: "1st Task", tag: "A" },
+      { text: "2nd Task", tag: "A" },
+      { text: "3rd Task", tag: "C" },
+      { text: "4th Task", tag: "B" },
+      { text: "5th Task", tag: "C" }
     ].forEach(insertTask);
   }
   Meteor.publish("tasks", _ => TasksCollection.find());
